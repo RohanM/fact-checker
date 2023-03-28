@@ -1,5 +1,8 @@
-import { BaseChain, LLMChain, SerializedBaseChain } from "langchain/chains";
+import { BaseChain, ChainInputs, SerializedBaseChain } from "langchain/chains";
 import { ChainValues } from "langchain/schema";
+import { LLMChain } from "langchain/chains";
+import { BaseLanguageModel } from "langchain/base_language";
+import { BaseMemory } from "langchain/memory";
 
 import {
   startFactcheckPrompt,
@@ -7,11 +10,26 @@ import {
   prioritisationPrompt,
 } from "./prompts.js";
 
+export interface FactCheckChainInput extends ChainInputs {
+  /** LLM Wrapper to use */
+  llm: BaseLanguageModel;
+}
+
 /**
  * Chain to fact check an article
  * @augments BaseChain
  */
-export class FactCheckChain extends BaseChain {
+export class FactCheckChain extends BaseChain implements FactCheckChainInput {
+  llm: BaseLanguageModel;
+
+  constructor(fields: {
+    llm: BaseLanguageModel;
+    memory?: BaseMemory;
+  }) {
+    super(fields.memory);
+    this.llm = fields.llm;
+  }
+
   get inputKeys(): string[] {
     return ["article"];
   }
