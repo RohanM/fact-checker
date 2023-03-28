@@ -1,46 +1,49 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Fact Check!</title>
-</head>
-<body>
-  <h1>Fact Checker</h1>
-  <form id="fact-check-form">
-    <label for="article">Article:</label><br />
-    <textarea id="article" name="article" rows="16" cols="80"></textarea><br />
-    <button type="submit">Fact check</button>
-  </form>
-  <div id="response"></div>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fact Check!</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div id="container">
+      <h1>Fact Checker</h1>
+      <form id="fact-check-form">
+        <label for="article">Article:</label><br />
+        <textarea id="article" name="article" rows="16" cols="80"></textarea><br />
+        <button type="submit">Fact check</button>
+      </form>
+      <div id="response"></div>
 
-  <script type="text/javascript">
-    document.getElementById("fact-check-form").addEventListener("submit", async (event) => {
-      event.preventDefault();
+      <script type="text/javascript">
+        document.getElementById("fact-check-form").addEventListener("submit", async (event) => {
+          event.preventDefault();
 
-      const article = document.getElementById("article").value;
-      const responseDiv = document.getElementById("response");
+          const article = document.getElementById("article").value;
+          const responseDiv = document.getElementById("response");
 
-      try {
-        const response = await fetch("/fact-check", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({ article: article })
+          try {
+            const response = await fetch("/fact-check", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json"
+              },
+              body: JSON.stringify({ article: article })
+            });
+
+            const data = await response.json();
+            if (response.ok) {
+              responseDiv.innerHTML = `<pre>${data.text}</pre>`;
+            } else {
+              responseDiv.innerHTML = `<pre>Error: ${data.error}</pre>`;
+            }
+          } catch (error) {
+            console.error("Error:", error);
+            responseDiv.innerHTML = `<pre>Error: ${error.message}</pre>`;
+          }
         });
-
-        const data = await response.json();
-        if (response.ok) {
-          responseDiv.innerHTML = `<pre>${data.text}</pre>`;
-        } else {
-          responseDiv.innerHTML = `<pre>Error: ${data.error}</pre>`;
-        }
-      } catch (error) {
-        console.error("Error:", error);
-        responseDiv.innerHTML = `<pre>Error: ${error.message}</pre>`;
-      }
-    });
-  </script>
-</body>
+        </script>
+    </div>
+  </body>
 </html>
