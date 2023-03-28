@@ -38,9 +38,47 @@ export class FactCheckChain extends BaseChain implements FactCheckChainInput {
     if (!("article" in values)) {
       throw new Error(`Article not specified.`);
     }
-    const article = values.article;
 
-    return article;
+    const startFactcheckChain = new LLMChain({
+      llm: this.llm,
+      prompt: startFactcheckPrompt,
+    })
+
+    const startFactcheckValues = await startFactcheckChain.call({
+      article: values.article,
+    });
+
+    console.log("");
+    console.log(startFactcheckValues.text);
+
+    const componentsChain = new LLMChain({
+      llm: this.llm,
+      prompt: componentsPrompt,
+    })
+
+    const componentsValues = await componentsChain.call({
+      claims: startFactcheckValues.text,
+    });
+
+    console.log("");
+    console.log(componentsValues.text);
+
+    const prioritisationChain = new LLMChain({
+      llm: this.llm,
+      prompt: prioritisationPrompt,
+    })
+
+    const prioritisationValues = await prioritisationChain.call({
+      article: values.article,
+      claims: componentsValues.text,
+    });
+
+    console.log("");
+    console.log(prioritisationValues.text);
+
+    return {
+      claims: prioritisationValues.text,
+    };
   }
 
   serialize(): SerializedBaseChain {

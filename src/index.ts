@@ -22,9 +22,9 @@ app.post("/fact-check", async (req, res) => {
     const model = new OpenAI({ temperature: 0, modelName: "gpt-3.5-turbo" });
 
     const chain = new FactCheckChain({ llm: model });
-    const text = await chain.call({ article: article });
+    const result = await chain.call({ article: article });
 
-    res.json({ text: text });
+    res.json({ text: result.claims })
   } else {
     res.status(400).json({ error: "Missing 'article' parameter in request body." });
   }
