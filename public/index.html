@@ -13,5 +13,34 @@
     <button type="submit">Fact check</button>
   </form>
   <div id="response"></div>
+
+  <script type="text/javascript">
+    document.getElementById("fact-check-form").addEventListener("submit", async (event) => {
+      event.preventDefault();
+
+      const article = document.getElementById("article").value;
+      const responseDiv = document.getElementById("response");
+
+      try {
+        const response = await fetch("/fact-check", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ article: article })
+        });
+
+        const data = await response.json();
+        if (response.ok) {
+          responseDiv.innerHTML = `<pre>${data.article}</pre>`;
+        } else {
+          responseDiv.innerHTML = `<pre>Error: ${data.error}</pre>`;
+        }
+      } catch (error) {
+        console.error("Error:", error);
+        responseDiv.innerHTML = `<pre>Error: ${error.message}</pre>`;
+      }
+    });
+  </script>
 </body>
 </html>
