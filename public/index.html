@@ -32,7 +32,7 @@
 
         const data = await response.json();
         if (response.ok) {
-          responseDiv.innerHTML = `<pre>${data.article}</pre>`;
+          responseDiv.innerHTML = `<pre>${data.text}</pre>`;
         } else {
           responseDiv.innerHTML = `<pre>Error: ${data.error}</pre>`;
         }
