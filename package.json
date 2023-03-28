@@ -20,6 +20,7 @@
   "dependencies": {
     "body-parser": "1.20.2",
     "express": "4.18.2",
-    "langchain": "0.0.42"
+    "langchain": "0.0.42",
+    "openai": "3.2.1"
   }
 }
