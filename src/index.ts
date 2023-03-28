@@ -4,6 +4,7 @@ import path from "path";
 import { fileURLToPath } from "url";
 
 import { OpenAI } from "langchain";
+import { FactCheckChain } from "./chains/index.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -19,7 +20,9 @@ app.post("/fact-check", async (req, res) => {
 
   if (article) {
     const model = new OpenAI({ temperature: 0, modelName: "gpt-3.5-turbo" });
-    const text = await model.call(article);
+
+    const chain = new FactCheckChain();
+    const text = await chain.call({ article: article });
 
     res.json({ text: text });
   } else {
